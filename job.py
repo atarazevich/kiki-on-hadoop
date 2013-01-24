@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 import datetime
 from collections import defaultdict
@@ -59,7 +61,7 @@ class AnalyticJob(MRJob):
         revenue_key = dict(
             cohort=log.get('cohort'),
             market=log.get('market'),
-            dt=datetime.datetime.fromtimestamp(log.get('dt')).strftime('%Y-%m-%d'),
+            dt=datetime.datetime.fromtimestamp(log.get('dt', 0)).strftime('%Y-%m-%d'),
             feed=log.get('feed')
         )
 
