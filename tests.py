@@ -58,11 +58,11 @@ class MRTest(unittest.TestCase):
     def test_reducer(self):
         key = {'source': 'aaa'}
         values = [{'clicks': 5}, {'clicks': 3}, {'searches': 2}, {'impressions': 3}, {'impressions': 7}]
-        protocol = self.job.INTERNAL_PROTOCOL
+        protocol = self.job.INTERNAL_PROTOCOL()
         data = '\n'.join(protocol.write(key, value) for value in values)
 
         self.job.sandbox(stdin=StringIO(data))
-        self.job.run_reducer(step_num=0)
+        self.job.run_reducer()
 
         result = self.job.parse_output()[0]
         _, values = result

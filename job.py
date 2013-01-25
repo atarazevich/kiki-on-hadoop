@@ -42,12 +42,15 @@ class LogProtocol(object):
 
 
 def flat_dict(list_of_dicts):
-    """ Convert list of dicts into dict of lists """
+    """ Convert list of dicts into dict """
+    dct = defaultdict(int)
 
-    dct = defaultdict(list)
     for dct_element in list_of_dicts:
-        for key, value in dct_element.items():
-            dct[key].append(value)
+        for key, val in dct_element.items():
+            if not isinstance(val, (int, long)):
+                continue
+
+            dct[key] += val
 
     return dct
 
@@ -75,7 +78,7 @@ class AnalyticJob(MRJob):
 
 
     def reducer(self, key, values):
-        yield key, {key: sum(vals) for key, vals in flat_dict(values).items()}
+        yield key, flat_dict(values)
 
     def steps(self):
         return [
