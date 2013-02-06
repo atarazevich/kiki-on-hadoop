@@ -1,5 +1,7 @@
 import datetime
 import logging
+import time
+import os
 
 from job import AnalyticJob
 from sqlalchemy import create_engine
@@ -32,14 +34,16 @@ def save(Model, keys, values):
 
 def main():
     input_path = INPUT_PATH.format(date=datetime.date.today().strftime('%Y-%m-%d'))
+    output_path = os.path.join(OUTPUT_PATH, str(time.time()))
+
     logger.info('Preparing Hadoop Job directed to path ' + input_path)
 
-    job = AnalyticJob(args=['-r', 'hadoop', input_path])
+    job = AnalyticJob(args=['-r', 'hadoop', '--no-output', '-o', output_path, input_path])
     with job.make_runner() as runner:
         runner.run()
         logger.info('Saving...')
 
-        for line in runner.stream_output():
+        for line in runner.cat(output_path):
             keys, values = job.parse_output_line(line)
 
             logger.debug(keys)
