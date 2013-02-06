@@ -35,6 +35,7 @@ def save(Model, keys, values):
 def main():
     input_path = INPUT_PATH.format(date=datetime.date.today().strftime('%Y-%m-%d'))
     output_path = os.path.join(OUTPUT_PATH, str(time.time()))
+    result_path = os.path.join(output_path, 'part-*')
 
     logger.info('Preparing Hadoop Job directed to path ' + input_path)
 
@@ -43,7 +44,7 @@ def main():
         runner.run()
         logger.info('Saving...')
 
-        for line in runner.cat(output_path):
+        for line in runner.cat(result_path):
             keys, values = job.parse_output_line(line)
 
             logger.debug(keys)

@@ -1,0 +1,3 @@
+mrjob
+sqlalchemy
+MySQL-python
