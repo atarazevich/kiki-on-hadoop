@@ -15,14 +15,14 @@ class MRTest(unittest.TestCase):
         self.job = AnalyticJob()
 
     def test_mapper_with_simple_log(self):
-        self.job.sandbox(stdin=StringIO('1|{}'))
+        self.job.sandbox(stdin=StringIO('2013-02-05T13:52:08Z hdfs.test.search {}'))
         self.job.run_mapper()
 
         emit1, emit2 =  self.job.parse_output()
         keys, values = emit1
 
-        self.assertEqual(values, {'clicks': 1})
-        self.assertEqual(keys['dt'], '1970-01-01')
+        self.assertEqual(values, {'search': 1})
+        self.assertEqual(keys['dt'], '2013-02-05')
 
         self.assertIsNone(emit2[0]['source'])
         self.assertIsNone(emit2[0]['feed'])
@@ -30,7 +30,7 @@ class MRTest(unittest.TestCase):
 
 
     def test_mapper_with_unknown_type(self):
-        self.job.sandbox(stdin=StringIO('10|{}'))
+        self.job.sandbox(stdin=StringIO('2013-02-05T13:52:08Z {}'))
         self.job.run_mapper()
 
         self.assertEqual(self.job.parse_output(), [])
@@ -43,17 +43,18 @@ class MRTest(unittest.TestCase):
 
     def test_mapper(self):
         timestamp = int(time.time())
-        self.job.sandbox(stdin=StringIO('0|{:cohort=>"aaaa", :feed=>nil, :dt=>%d}' % timestamp))
+        self.job.sandbox(stdin=StringIO('2013-02-05T08:24:06Z   hdfs.test.click {"source":"bing","cohort":"ccc"}'))
         self.job.run_mapper()
 
-        emit, _ = self.job.parse_output()
+        _, emit = self.job.parse_output()
         keys, values = emit
 
         self.assertIsNone(keys['feed'])
-        self.assertEqual(keys['cohort'], 'aaaa')
-        self.assertEqual(keys['dt'], datetime.date.today().strftime('%Y-%m-%d'))
+        self.assertEqual(keys['cohort'], 'ccc')
+        self.assertEqual(keys['source'], 'bing')
+        self.assertEqual(keys['dt'], '2013-02-05')
 
-        self.assertEqual(values, {'searches': 1})
+        self.assertEqual(values, {'click': 1})
 
     def test_reducer(self):
         key = {'source': 'aaa'}

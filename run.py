@@ -11,9 +11,9 @@ from settings import *
 
 
 FIELD_MAPPER = (
-    ('searches', 'bidded_searches'),
-    ('impressions', 'bidded_results'),
-    ('clicks', 'bidded_clicks'),
+    ('search', 'bidded_searches'),
+    ('impression', 'bidded_results'),
+    ('click', 'bidded_clicks'),
 )
 
 def save(Model, keys, values):
