@@ -33,7 +33,7 @@ def save(Model, keys, values):
 
 
 def main():
-    input_path = INPUT_PATH.format(date=datetime.date.today().strftime('%Y-%m-%d'))
+    input_path = INPUT_PATH.format(date=datetime.date.today().strftime('%Y%m%d'))
     output_path = os.path.join(OUTPUT_PATH, str(time.time()))
     result_path = os.path.join(output_path, 'part-*')
 
@@ -44,16 +44,21 @@ def main():
         runner.run()
         logger.info('Saving...')
 
-        for line in runner.cat(result_path):
-            keys, values = job.parse_output_line(line)
+        for filename in runner.ls(result_path):
+            # Fix filename trouble with HADOOP 2.0
+            filename = filename.replace('hdfs://hdfs://', 'hdfs://')
 
-            logger.debug(keys)
-            logger.debug(values)
+            for line in runner._cat_file(filename):
 
-            if 'source' in keys:
-                save(SourceAggregate, keys, values)
-            else:
-                save(RevenueAggregate, keys, values)
+                keys, values = job.parse_output_line(line)
+
+                logger.info(keys)
+                logger.info(values)
+
+                if 'source' in keys:
+                    save(SourceAggregate, keys, values)
+                else:
+                    save(RevenueAggregate, keys, values)
 
         session.commit()
 
