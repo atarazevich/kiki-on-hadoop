@@ -6,7 +6,7 @@ def get_configurations(section_name='kiki'):
     parser = optparse.OptionParser()
     parser.add_option("-c", "--config", dest="config_file",
         help="Full path to configuration file for Kiki", metavar="FILE",
-        default='/etc/kiki/kiki.cfg'
+        default='/etc/kiki/kiki.yaml'
     )
     options, _ = parser.parse_args()
 
