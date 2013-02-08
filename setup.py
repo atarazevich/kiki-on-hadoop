@@ -16,7 +16,7 @@ setup(
             'run_kiki = kiki_on_hadoop.run_kiki:main'
         ]
     },
-    data_files=[
-        ('/etc/kiki', ['etc/kiki/kiki.cfg'])
-    ]
+    #data_files=[
+    #    ('/etc/kiki', ['etc/kiki/kiki.cfg'])
+    #]
 )
