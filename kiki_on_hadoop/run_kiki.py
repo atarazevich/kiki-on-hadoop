@@ -2,14 +2,25 @@ import datetime
 import logging
 import time
 import os
+import ConfigParser
 
 from job import AnalyticJob
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from models import SourceAggregate, RevenueAggregate
-from settings import *
 
+
+config = ConfigParser.ConfigParser()
+config.read('/etc/kiki/kiki.cfg')
+
+engine = create_engine(config.get('kiki', 'db'))
+session = sessionmaker(bind=engine)()
+
+logger = logging.getLogger('mrjob.hadoop')
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
+logger.info('Initialize')
 
 
 FIELD_MAPPER = (
@@ -17,6 +28,7 @@ FIELD_MAPPER = (
     ('impression', 'bidded_results'),
     ('click', 'bidded_clicks'),
 )
+
 
 def save(Model, keys, values):
     filter_by = {key: val for key, val in keys.items() if key in Model.__table__.columns}
@@ -33,8 +45,8 @@ def save(Model, keys, values):
 
 
 def main():
-    input_path = INPUT_PATH.format(date=datetime.date.today().strftime('%Y%m%d'))
-    output_path = os.path.join(OUTPUT_PATH, str(time.time()))
+    input_path = config.get('kiki', 'input_path').format(date=datetime.date.today().strftime('%Y%m%d'))
+    output_path = os.path.join(config.get('kiki', 'output_path'), str(time.time()))
     result_path = os.path.join(output_path, 'part-*')
 
     logger.info('Preparing Hadoop Job directed to path ' + input_path)
@@ -67,14 +79,6 @@ def main():
 
 
 if __name__ == '__main__':
-    engine = create_engine(MYSQL_DB)
-    session = sessionmaker(bind=engine)()
-
-    logger = logging.getLogger('mrjob.hadoop')
-    logger.setLevel(logging.INFO)
-    logger.addHandler(logging.StreamHandler())
-    logger.info('Initialize')
-
     main()
 
 

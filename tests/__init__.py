@@ -1,6 +1,5 @@
 import unittest
 import time
-import datetime
 from StringIO import StringIO
 
 try:
@@ -8,7 +7,7 @@ try:
 except ImportError:
     import json
 
-from job import AnalyticJob
+from kiki_on_hadoop.job import AnalyticJob
 
 class MRTest(unittest.TestCase):
     def setUp(self):
