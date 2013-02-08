@@ -7,7 +7,8 @@ setup(
     install_requires=[
         'mrjob',
         'sqlalchemy',
-        'MySQL-python'
+        'MySQL-python',
+        'PyYAML'
     ],
     test_suite='tests',
     entry_points = {

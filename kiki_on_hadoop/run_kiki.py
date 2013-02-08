@@ -2,24 +2,17 @@ import datetime
 import logging
 import time
 import os
-import sys
-import ConfigParser
 
 from job import AnalyticJob
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from models import SourceAggregate, RevenueAggregate
+from helpers import get_configurations
 
-try:
-    config_file = open('/etc/kiki/kiki.cfg')
-except IOError:
-    sys.exit('Unable to find config file: /etc/kiki/kiki.cfg')
 
-config = ConfigParser.ConfigParser()
-config.readfp(config_file)
-
-engine = create_engine(config.get('kiki', 'db'))
+config = get_configurations()
+engine = create_engine(config.get('db'))
 session = sessionmaker(bind=engine)()
 
 logger = logging.getLogger('mrjob.hadoop')
@@ -28,12 +21,12 @@ logger.addHandler(logging.StreamHandler())
 logger.info('Initialize')
 
 
+
 FIELD_MAPPER = (
     ('search', 'bidded_searches'),
     ('impression', 'bidded_results'),
     ('click', 'bidded_clicks'),
 )
-
 
 def save(Model, keys, values):
     filter_by = {key: val for key, val in keys.items() if key in Model.__table__.columns}
@@ -50,8 +43,8 @@ def save(Model, keys, values):
 
 
 def main():
-    input_path = config.get('kiki', 'input_path').format(date=datetime.date.today().strftime('%Y%m%d'))
-    output_path = os.path.join(config.get('kiki', 'output_path'), str(time.time()))
+    input_path = config.get('input_path').format(date=datetime.date.today().strftime('%Y%m%d'))
+    output_path = os.path.join(config.get('output_path'), str(time.time()))
     result_path = os.path.join(output_path, 'part-*')
 
     logger.info('Preparing Hadoop Job directed to path ' + input_path)
