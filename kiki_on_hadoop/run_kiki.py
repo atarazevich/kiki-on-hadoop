@@ -79,4 +79,6 @@ def main():
 if __name__ == '__main__':
     main()
 
+#export HADOOP_HOME=/usr/lib/hadoop/
+#export JAVA_HOME=/usr/
 

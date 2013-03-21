@@ -20,7 +20,7 @@ except ImportError:
 
 class LogProtocol(object):
     def read(self, line):
-        dt, event, log = line.split()
+        dt, event, log = line.split('\t')
         event = event.split('.')[-1]
 
         return (dt, event), json.loads(log)
