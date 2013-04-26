@@ -7,7 +7,7 @@ from job import AnalyticJob
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import SourceAggregate, RevenueAggregate
+from models import DailyStatisticData
 from helpers import get_configurations
 
 
@@ -23,10 +23,19 @@ logger.info('Initialize')
 
 
 FIELD_MAPPER = (
-    ('search', 'bidded_searches'),
-    ('impression', 'bidded_results'),
-    ('click', 'bidded_clicks'),
+    ('biddedsearch', 'our_biddedsearches'),
+    ('nonbiddedsearch','our_nonbiddedsearchs'),
+    ('impression', 'our_impression'),
+    ('click', 'our_clicks'),
+    ('installation', 'our_installations')
 )
+
+## present field in JONES doc
+# search
+# impression 
+# click
+
+
 
 def save(Model, keys, values):
     filter_by = {key: val for key, val in keys.items() if key in Model.__table__.columns}
@@ -65,10 +74,7 @@ def main():
                 logger.info(keys)
                 logger.info(values)
 
-                if 'source' in keys:
-                    save(SourceAggregate, keys, values)
-                else:
-                    save(RevenueAggregate, keys, values)
+                save(DailyStatisticData, keys, values)
 
         session.commit()
 
@@ -79,6 +85,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-#export HADOOP_HOME=/usr/lib/hadoop/
-#export JAVA_HOME=/usr/
 

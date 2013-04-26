@@ -20,7 +20,7 @@ except ImportError:
 
 class LogProtocol(object):
     def read(self, line):
-        dt, event, log = line.split('\t')
+        dt, event, log = line.split()
         event = event.split('.')[-1]
 
         return (dt, event), json.loads(log)
@@ -54,18 +54,15 @@ class AnalyticJob(MRJob):
     def mapper(self, key, log):
         dt, event = key
 
-        revenue_key = dict(
-            cohort=log.get('cohort'),
-            market=log.get('market'),
+        keys = dict(
+            channel_name=log.get('cohort'),
+            geo=log.get('market'),
             dt=datetime2date(dt),
-            feed=log.get('feed')
+            feed_id=log.get('feed'),
+            source=log.get('source')
         )
 
-        source_key = revenue_key.copy()
-        source_key['source'] = log.get('source')
-
-        yield revenue_key, dict(**{event: 1})
-        yield source_key, dict(**{event: 1})
+        yield keys, dict(**{event: 1})
 
 
     def reducer(self, key, values):

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime, SmallInteger, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, SmallInteger, ForeignKey, Float
 
 Base = declarative_base()
 
@@ -74,3 +74,29 @@ class RevenueAggregate(Base):
 
     daily_actives = Column(Integer, default=0, nullable=False)
     daily_installs = Column(Integer, default=0, nullable=False)
+
+
+class DailyStatisticData(Base):
+    """Base class for all entities crawled online.  """
+    __tablename__ = 'daily_statistic_data'
+
+    id = Column(Integer, primary_key=True)
+    dt = Column(DateTime, index=True, nullable=False)
+
+    feed_id = Column(Integer, index=True, nullable=False, default=0)
+    channel_name = Column(String(100), index=True, nullable=False)  # cohort_name
+    source = Column(String(100), index=True)
+    geo = Column(String(100), index=True)       # market
+
+    dau_ip = Column(Integer, default=0)         # (DAU-IP) Unique IPs by day
+    dau_guid = Column(Integer, default=0)       # (DAU-GUID) Unique GUIDs by day
+
+    our_biddedsearches = Column(Integer, default=0)   # Total Number of Searches based on our raw data by day
+    our_notbiddedsearches = Column(Integer, default=0)   # Total Number of Searches based on our raw data by day
+    our_clicks = Column(Integer, default=0)     # Total Number of Clicks based on our raw data by day
+    our_installations = Column(Integer, default=0)   # Total number of installs for day
+    our_impressions = Column(Integer, default=0)   # Total number of impressions for day
+
+    feed_searches = Column(Integer, default=0)  # Total Number of Searches based on Feed Reports by day
+    feed_clicks = Column(Integer, default=0)    # Total Number of Clicks based on Feed Reports by day
+    gross_revenue = Column(Float, default=0)    # Total Revenue from Feed Reports for day
