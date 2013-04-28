@@ -1,4 +1,6 @@
 *.py[cod]
+*.komodoproject
+*.gitignore
 
 # C extensions
 *.so
