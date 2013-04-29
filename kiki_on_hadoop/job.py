@@ -35,10 +35,11 @@ def flat_dict(list_of_dicts):
 
     for dct_element in list_of_dicts:
         for key, val in dct_element.items():
-            if not isinstance(val, (int, long)):
-                continue
+            if isinstance(val, dict):
+                dct[key] = flat_dict(val)
+            if isinstance(val, (int, long)):
+		dct[key] += val
 
-            dct[key] += val
 
     return dct
 
@@ -62,7 +63,9 @@ class AnalyticJob(MRJob):
             source=log.get('source')
         )
 
-        yield keys, dict(**{event: 1})
+       	yield keys, dict(**{event: 1}, dau_ip={log.get('ip'): 1}, dau_guid={log.get('guid'):1})
+	#yield 'ip', {log.get('ip'): 1}
+	#yield 'guid', {log.get('guid'): 1} 
 
 
     def reducer(self, key, values):

@@ -44,6 +44,9 @@ def save(Model, keys, values):
     if not item:
         item = Model(**filter_by)
         session.add(item)
+
+    item['dau_ip'] = len(item['dau_ip'])
+    item['dau_guid'] = len(item(['dau_guid']))
         
     mapper = dict(FIELD_MAPPER)
     for key, val in values.items():
