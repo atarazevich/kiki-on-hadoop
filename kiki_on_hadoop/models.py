@@ -83,7 +83,7 @@ class DailyStatisticData(Base):
     id = Column(Integer, primary_key=True)
     dt = Column(DateTime, index=True, nullable=False)
 
-    feed_id = Column(Integer, index=True, nullable=False, default=0)
+    feed_ext_id = Column(Integer, index=True, nullable=False, default=0)
     channel_name = Column(String(100), index=True, nullable=False)  # cohort_name
     source = Column(String(100), index=True)
     geo = Column(String(100), index=True)       # market
@@ -92,7 +92,7 @@ class DailyStatisticData(Base):
     dau_guid = Column(Integer, default=0)       # (DAU-GUID) Unique GUIDs by day
 
     our_biddedsearches = Column(Integer, default=0)   # Total Number of Searches based on our raw data by day
-    our_notbiddedsearches = Column(Integer, default=0)   # Total Number of Searches based on our raw data by day
+    our_nonbiddedsearches = Column(Integer, default=0)   # Total Number of Searches based on our raw data by day
     our_clicks = Column(Integer, default=0)     # Total Number of Clicks based on our raw data by day
     our_installations = Column(Integer, default=0)   # Total number of installs for day
     our_impressions = Column(Integer, default=0)   # Total number of impressions for day

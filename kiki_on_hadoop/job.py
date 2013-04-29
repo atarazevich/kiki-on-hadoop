@@ -58,7 +58,7 @@ class AnalyticJob(MRJob):
             channel_name=log.get('cohort'),
             geo=log.get('market'),
             dt=datetime2date(dt),
-            feed_id=log.get('feed'),
+            feed_ext_id=log.get('feed'),
             source=log.get('source')
         )
 

@@ -24,8 +24,8 @@ logger.info('Initialize')
 
 FIELD_MAPPER = (
     ('biddedsearch', 'our_biddedsearches'),
-    ('nonbiddedsearch','our_nonbiddedsearchs'),
-    ('impression', 'our_impression'),
+    ('nonbiddedsearch','our_nonbiddedsearches'),
+    ('impression', 'our_impressions'),
     ('click', 'our_clicks'),
     ('installation', 'our_installations')
 )
@@ -39,8 +39,12 @@ FIELD_MAPPER = (
 
 def save(Model, keys, values):
     filter_by = {key: val for key, val in keys.items() if key in Model.__table__.columns}
-    item = session.query(Model).filter_by(**filter_by).first() or Model(**filter_by)
+    item = session.query(Model).filter_by(**filter_by).first()
 
+    if not item:
+        item = Model(**filter_by)
+        session.add(item)
+        
     mapper = dict(FIELD_MAPPER)
     for key, val in values.items():
         if key not in mapper:
@@ -48,7 +52,6 @@ def save(Model, keys, values):
 
         setattr(item, mapper[key], val)
 
-    session.add(item)
 
 
 def main():
@@ -71,9 +74,9 @@ def main():
 
                 keys, values = job.parse_output_line(line)
 
-                logger.info(keys)
-                logger.info(values)
-
+		logger.info(keys)
+		logger.info(values)
+		
                 save(DailyStatisticData, keys, values)
 
         session.commit()
