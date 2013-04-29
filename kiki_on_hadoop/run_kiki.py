@@ -27,15 +27,10 @@ FIELD_MAPPER = (
     ('nonbiddedsearch','our_nonbiddedsearches'),
     ('impression', 'our_impressions'),
     ('click', 'our_clicks'),
-    ('installation', 'our_installations')
+    ('installation', 'our_installations'),
+    ('dau_guid', 'dau_guid'),
+    ('dau_ip', 'dau_ip'),
 )
-
-## present field in JONES doc
-# search
-# impression 
-# click
-
-
 
 def save(Model, keys, values):
     filter_by = {key: val for key, val in keys.items() if key in Model.__table__.columns}
@@ -45,14 +40,12 @@ def save(Model, keys, values):
         item = Model(**filter_by)
         session.add(item)
 
-    item['dau_ip'] = len(item['dau_ip'])
-    item['dau_guid'] = len(item(['dau_guid']))
-        
     mapper = dict(FIELD_MAPPER)
     for key, val in values.items():
+        if key in ('dau_ip', 'dau_guid'):
+           val = len(val)
         if key not in mapper:
             continue
-
         setattr(item, mapper[key], val)
 
 

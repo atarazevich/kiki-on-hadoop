@@ -8,15 +8,6 @@ try:
 except ImportError:
     import json
 
-#EVENT_SEARCH = 0
-#EVENT_CLICK = 1
-#EVENT_IMPRESSION = 2
-#
-#EVENTS = (
-#    (EVENT_SEARCH, 'searches'),
-#    (EVENT_CLICK, 'clicks'),
-#    (EVENT_IMPRESSION, 'impressions')
-#)
 
 class LogProtocol(object):
     def read(self, line):
@@ -36,7 +27,7 @@ def flat_dict(list_of_dicts):
     for dct_element in list_of_dicts:
         for key, val in dct_element.items():
             if isinstance(val, dict):
-                dct[key] = flat_dict(val)
+                dct[key] = flat_dict([dct[key] or {}, val])
             if isinstance(val, (int, long)):
 		dct[key] += val
 
@@ -63,9 +54,7 @@ class AnalyticJob(MRJob):
             source=log.get('source')
         )
 
-       	yield keys, dict(**{event: 1}, dau_ip={log.get('ip'): 1}, dau_guid={log.get('guid'):1})
-	#yield 'ip', {log.get('ip'): 1}
-	#yield 'guid', {log.get('guid'): 1} 
+       	yield keys, dict(**{event: 1, 'dau_ip':{log.get('ip'): 1}, 'dau_guid':{log.get('guid'):1}})
 
 
     def reducer(self, key, values):
